@@ -126,7 +126,7 @@ def perceptron(feature_matrix, labels, T):
     theta, the linear classification parameter, after T iterations through the
     feature matrix and the second element is a real number with the value of
     theta_0, the offset classification parameter, after T iterations through
-    the feature matrix.
+    the feature matrix. 
     """
     # Your code here
     current_theta = np.zeros(feature_matrix.shape[1])
