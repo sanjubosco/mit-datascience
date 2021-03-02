@@ -368,7 +368,8 @@ def bag_of_words(texts):
     # Your code here
     ## load the stopwords
     stopwords = list()
-    with open('stopwords.txt') as fl:
+    import os
+    with open(os.path.join(os.path.dirname(os.path.realpath(__file__)),'stopwords.txt')) as fl:
         stopwords = fl.read().splitlines()
 
     dictionary = {} # maps word to unique index
