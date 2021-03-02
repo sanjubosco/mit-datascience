@@ -34,11 +34,6 @@ def hinge_loss_single(feature_vector, label, theta, theta_0):
     given data point and parameters.
     """
     # Your code here
-    hg_loss = 0
-    if (label*(np.dot(feature_vector.T,theta) + theta_0) <= 1):
-        hg_loss = 1 - label*(np.dot(feature_vector.T,theta) + theta_0)
-
-    return (hg_loss)
     raise NotImplementedError
 
 
@@ -61,13 +56,6 @@ def hinge_loss_full(feature_matrix, labels, theta, theta_0):
     loss across all of the points in the feature matrix.
     """
     # Your code here
-    hg_loss = 0
-    for i,feature_vector in enumerate(feature_matrix):
-        label = labels[i]
-        if (label*(np.dot(feature_vector.T,theta) + theta_0) <= 1):
-            hg_loss = hg_loss + (1 - label*(np.dot(feature_vector.T,theta) + theta_0))
-
-    return (hg_loss/feature_matrix.shape[0])
     raise NotImplementedError
 
 
@@ -94,12 +82,6 @@ def perceptron_single_step_update(
     completed.
     """
     # Your code here
-    if (label*(np.dot(feature_vector.T,current_theta) + current_theta_0) <= 0):
-        current_theta = current_theta + label*feature_vector
-        current_theta_0 = current_theta_0 + label
-
-    return (current_theta,current_theta_0)
-
     raise NotImplementedError
 
 
@@ -129,18 +111,10 @@ def perceptron(feature_matrix, labels, T):
     the feature matrix.
     """
     # Your code here
-    current_theta = np.zeros(feature_matrix.shape[1])
-    current_theta_0 = 0
     for t in range(T):
         for i in get_order(feature_matrix.shape[0]):
             # Your code here
-            current_theta, current_theta_0 = perceptron_single_step_update(
-            feature_matrix[i],
-            labels[i],
-            current_theta,
-            current_theta_0)
-
-    return (current_theta, current_theta_0)            
+            pass
     raise NotImplementedError
 
 
@@ -174,26 +148,6 @@ def average_perceptron(feature_matrix, labels, T):
     find a sum and divide.
     """
     # Your code here
-    current_theta = np.zeros(feature_matrix.shape[1])
-    current_theta_0 = 0
-    avg_theta = np.zeros(feature_matrix.shape[1])
-    avg_theta_0 = 0
-
-    for t in range(T):
-        for i in get_order(feature_matrix.shape[0]):
-            # Your code here
-            current_theta, current_theta_0 = perceptron_single_step_update(
-            feature_matrix[i],
-            labels[i],
-            current_theta,
-            current_theta_0)
-            avg_theta = avg_theta + current_theta
-            avg_theta_0 = avg_theta_0 + current_theta_0
-
-    avg_theta = avg_theta/(T*feature_matrix.shape[0])
-    avg_theta_0 = avg_theta_0/(T*feature_matrix.shape[0])
-    
-    return (avg_theta, avg_theta_0)
     raise NotImplementedError
 
 
@@ -224,12 +178,6 @@ def pegasos_single_step_update(
     completed.
     """
     # Your code here
-    if (label*(np.dot(feature_vector.T,current_theta) + current_theta_0) <= 1):
-        current_theta = (1-eta*L)*current_theta + eta*label*feature_vector
-        current_theta_0 = current_theta_0 + eta*label
-    else:
-        current_theta = (1-eta*L)*current_theta
-    return (current_theta,current_theta_0)
     raise NotImplementedError
 
 
@@ -263,17 +211,6 @@ def pegasos(feature_matrix, labels, T, L):
     parameter, found after T iterations through the feature matrix.
     """
     # Your code here
-    current_theta = np.zeros(feature_matrix.shape[1])
-    current_theta_0 = 0
-    updates = 0
-    for t in range(T):
-        for i in get_order(feature_matrix.shape[0]):
-            # Your code here
-            updates += 1
-            eta = 1/np.sqrt(updates)
-            current_theta,current_theta_0 = pegasos_single_step_update(feature_matrix[i],labels[i],L,eta,current_theta,current_theta_0)
-
-    return (current_theta, current_theta_0)  
     raise NotImplementedError
 
 # Part II
@@ -297,10 +234,6 @@ def classify(feature_matrix, theta, theta_0):
     be considered a positive classification.
     """
     # Your code here
-    output = np.dot(feature_matrix,theta) + theta_0
-    output = np.where(output > 0, 1, -1)
-    return output
-
     raise NotImplementedError
 
 
@@ -337,11 +270,6 @@ def classifier_accuracy(
     accuracy of the trained classifier on the validation data.
     """
     # Your code here
-    theta, theta_0 = classifier(train_feature_matrix,train_labels,**kwargs)
-    test_accuracy = accuracy(classify(train_feature_matrix,theta, theta_0),train_labels)
-    val_accuracy = accuracy(classify(val_feature_matrix,theta, theta_0),val_labels)
-    return ((test_accuracy,val_accuracy))
-
     raise NotImplementedError
 
 
@@ -366,16 +294,11 @@ def bag_of_words(texts):
     Feel free to change this code as guided by Problem 9
     """
     # Your code here
-    ## load the stopwords
-    stopwords = list()
-    with open('stopwords.txt') as fl:
-        stopwords = fl.read().splitlines()
-
     dictionary = {} # maps word to unique index
     for text in texts:
         word_list = extract_words(text)
         for word in word_list:
-            if word not in dictionary and word not in stopwords:
+            if word not in dictionary:
                 dictionary[word] = len(dictionary)
     return dictionary
 
@@ -399,7 +322,7 @@ def extract_bow_feature_vectors(reviews, dictionary):
         word_list = extract_words(text)
         for word in word_list:
             if word in dictionary:
-                feature_matrix[i, dictionary[word]] += 1
+                feature_matrix[i, dictionary[word]] = 1
     return feature_matrix
 
 
