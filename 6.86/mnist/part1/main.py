@@ -152,7 +152,7 @@ def run_softmax_on_MNIST_mod3(temp_parameter=1):
 
 
 # TODO: Run run_softmax_on_MNIST_mod3(), report the error rate
-print('softmax Mod 3 test_error=', run_softmax_on_MNIST_mod3(temp_parameter=1))
+#print('softmax Mod 3 test_error=', run_softmax_on_MNIST_mod3(temp_parameter=1))
 
 #######################################################################
 # 7. Classification Using Manually Crafted Features
@@ -161,6 +161,7 @@ print('softmax Mod 3 test_error=', run_softmax_on_MNIST_mod3(temp_parameter=1))
 ## Dimensionality reduction via PCA ##
 
 # TODO: First fill out the PCA functions in features.py as the below code depends on them.
+train_x, train_y, test_x, test_y = get_MNIST_data()
 
 
 n_components = 18
@@ -174,10 +175,12 @@ test_pca = project_onto_PC(test_x, pcs, n_components, feature_means)
 # train_pca (and test_pca) is a representation of our training (and test) data
 # after projecting each example onto the first 18 principal components.
 
-
 # TODO: Train your softmax regression model using (train_pca, train_y)
 #       and evaluate its accuracy on (test_pca, test_y).
-
+temp_parameter=1
+theta, cost_function_history = softmax_regression(train_pca, train_y, temp_parameter, alpha=0.3, lambda_factor=1.0e-4, k=10, num_iterations=150)
+test_error = compute_test_error(test_pca, test_y, theta, temp_parameter)
+print('softmax PCA test_error=', test_error)
 
 # TODO: Use the plot_PC function in features.py to produce scatterplot
 #       of the first 100 MNIST images, as represented in the space spanned by the
