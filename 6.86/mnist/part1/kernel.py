@@ -20,6 +20,8 @@ def polynomial_kernel(X, Y, c, p):
             kernel_matrix - (n, m) Numpy array containing the kernel matrix
     """
     # YOUR CODE HERE
+    pk = pow((np.dot(X,Y.T) + c),p)
+    return (pk)
     raise NotImplementedError
 
 
@@ -39,4 +41,11 @@ def rbf_kernel(X, Y, gamma):
             kernel_matrix - (n, m) Numpy array containing the kernel matrix
     """
     # YOUR CODE HERE
+    dist = np.zeros((X.shape[0],Y.shape[0]))
+    for col,i in enumerate(Y):
+        dis = np.sum((X-i)**2, axis = 1)
+        dist[:,col] = dis
+    exponent = dist * (-1*gamma)
+    rbf_kernel = np.exp(exponent)
+    return(rbf_kernel)
     raise NotImplementedError
