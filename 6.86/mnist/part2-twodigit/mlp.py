@@ -18,10 +18,16 @@ class MLP(nn.Module):
     def __init__(self, input_dimension):
         super(MLP, self).__init__()
         self.flatten = Flatten()
+        self.linear = nn.Linear(input_dimension, 64)
+        self.out = nn.Linear(64, 20)
         # TODO initialize model layers here
 
     def forward(self, x):
         xf = self.flatten(x)
+        x1 = self.linear(xf)
+        xout = self.out(x1)
+        out_first_digit = xout[:,:10]
+        out_second_digit = xout[:,10:]
 
         # TODO use model layers to predict the two digits
 
