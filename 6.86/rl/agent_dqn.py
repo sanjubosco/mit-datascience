@@ -41,7 +41,12 @@ def epsilon_greedy(state_vector, epsilon):
         (int, int): the indices describing the action/object to take
     """
     # TODO Your code here
-    action_index, object_index = None, None
+    if (np.random.binomial(1,(1-epsilon))):
+        action, obj = model(state_vector)
+        action_index, object_index = torch.argmax(action),torch.argmax(obj)
+    else:
+        action_index, object_index = np.random.randint(NUM_ACTIONS),np.random.randint(NUM_OBJECTS)
+
     return (action_index, object_index)
 
 class DQN(nn.Module):
@@ -119,16 +124,16 @@ def run_episode(for_training):
             utils.extract_bow_feature_vector(current_state, dictionary))
 
         # TODO Your code here
-        action_index, object_index = epsilon_greedy(current_state_vector, theta, epsilon)
+        action_index, object_index = epsilon_greedy(current_state_vector, epsilon)
         next_room_desc, next_quest_desc, reward, terminal = framework.step_game(current_room_desc, current_quest_desc, action_index,object_index)
         STEP_COUNT += 1
         next_state = next_room_desc + next_quest_desc
-        next_state_vector = utils.extract_bow_feature_vector(next_state, dictionary)    
+        next_state_vector = torch.FloatTensor(utils.extract_bow_feature_vector(next_state, dictionary)) 
 
         if for_training:
             # update Q-function.
             # TODO Your code here
-            deep_q_learning(theta, current_state_vector, action_index, object_index,
+            deep_q_learning(current_state_vector, action_index, object_index,
                       reward, next_state_vector, terminal)
 
         if not for_training:
