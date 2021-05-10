@@ -84,8 +84,14 @@ def deep_q_learning(current_state_vector, action_index, object_index, reward,
     q_value_cur_state = model(current_state_vector)
 
     # TODO Your code here
+    q_current = 1/2 * (q_value_cur_state[0][action_index] + q_value_cur_state[1][object_index])
 
-    loss = None
+    if (terminal):
+        maxQ = 0.0
+    else:
+        maxQ = maxq_next
+
+    loss = 1/2 * ((reward + GAMMA*maxQ) - q_current)**2
 
     optimizer.zero_grad()
     loss.backward()
@@ -100,8 +106,8 @@ def run_episode(for_training):
         If for testing, computes and return cumulative discounted reward
     """
     epsilon = TRAINING_EP if for_training else TESTING_EP
-    epi_reward = None
-
+    epi_reward = 0.0
+    STEP_COUNT = 0
     # initialize for each episode
     # TODO Your code here
 
@@ -113,19 +119,26 @@ def run_episode(for_training):
             utils.extract_bow_feature_vector(current_state, dictionary))
 
         # TODO Your code here
+        action_index, object_index = epsilon_greedy(current_state_vector, theta, epsilon)
+        next_room_desc, next_quest_desc, reward, terminal = framework.step_game(current_room_desc, current_quest_desc, action_index,object_index)
+        STEP_COUNT += 1
+        next_state = next_room_desc + next_quest_desc
+        next_state_vector = utils.extract_bow_feature_vector(next_state, dictionary)    
 
         if for_training:
             # update Q-function.
             # TODO Your code here
-            pass
+            deep_q_learning(theta, current_state_vector, action_index, object_index,
+                      reward, next_state_vector, terminal)
 
         if not for_training:
             # update reward
             # TODO Your code here
-            pass
+            epi_reward += (GAMMA**(STEP_COUNT - 1))*reward
 
         # prepare next step
         # TODO Your code here
+        current_room_desc, current_quest_desc = next_room_desc, next_quest_desc
 
     if not for_training:
         return epi_reward
